@@ -1,0 +1,5 @@
+This library has only one major dependency, id3lib, but it requires zlib as well (id3lib uses it).  When linking, remember to link both libid3 and zlib.  Other dependencies include fstream and math, both of which are standard libraries.
+
+This application outputs JSON to the console followed by a new line character.  The JSON has no formatting whatsoever, so the space taken is minimal.
+
+There are very little performance enhancements to this program.  For every argument passed in via commandline, it creates a new output array.  This will change in future versions, but for now it does it's job.  This will later be optomized to run on the ARM processor.
