@@ -1,381 +1,408 @@
+/**
+ * Copyright (c) 2010 T. Jameson Little
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 #include <id3/tag.h>
 #include <fstream>
 #include <math.h>
 
 using namespace std;
 
+char* destPath = NULL;
+char* filePath = NULL;
+int iAttachmentNum = 1;
+
+// formats the frame id according to ID3 standard naming convention, but lower-case
 void printFrameID(int iID, char* tCharArray, int* iCount){
 	switch(iID){
 		case ID3FID_NOFRAME:{				// No known frame.
 			break;
 		}
 		case ID3FID_AUDIOCRYPTO:{			// Audio encryption.
-			strncat(tCharArray, "\"AENC\"", 6);
+			strncat(tCharArray, "\"aenc\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_PICTURE:{				// Attached picture.
-			strncat(tCharArray, "\"APIC\"", 6);
+			strncat(tCharArray, "\"apic\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_COMMENT:{				// Comments.
-			strncat(tCharArray, "\"COMM\"", 6);
+			strncat(tCharArray, "\"comm\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_COMMERCIAL:{			// Commercial frame.
-			strncat(tCharArray, "\"COMR\"", 6);
+			strncat(tCharArray, "\"comr\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_CRYPTOREG:{				// Encryption method registration.
-			strncat(tCharArray, "\"ENCR\"", 6);
+			strncat(tCharArray, "\"encr\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_EQUALIZATION:{			// Equalization.
-			strncat(tCharArray, "\"EQUA\"", 6);
+			strncat(tCharArray, "\"equa\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_EVENTTIMING:{			// Event timing codes.
-			strncat(tCharArray, "\"ETCO\"", 6);
+			strncat(tCharArray, "\"etco\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_GENERALOBJECT:{			// General encapsulated object.
-			strncat(tCharArray, "\"GEOB\"", 6);
+			strncat(tCharArray, "\"geob\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_GROUPINGREG:{			// Group identification registration.
-			strncat(tCharArray, "\"GRID\"", 6);
+			strncat(tCharArray, "\"grid\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_INVOLVEDPEOPLE:{		// Involved people list.
-			strncat(tCharArray, "\"IPLS\"", 6);
+			strncat(tCharArray, "\"ipls\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_LINKEDINFO:{			// Linked information.
-			strncat(tCharArray, "\"LINK\"", 6);
+			strncat(tCharArray, "\"link\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_CDID:{					// Music CD identifier.
-			strncat(tCharArray, "\"MCDI\"", 6);
+			strncat(tCharArray, "\"mcdi\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_MPEGLOOKUP:{			// MPEG location lookup table.
-			strncat(tCharArray, "\"MLLT\"", 6);
+			strncat(tCharArray, "\"mllt\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_OWNERSHIP:{				// Ownership frame.
-			strncat(tCharArray, "\"OWNE\"", 6);
+			strncat(tCharArray, "\"owne\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_PRIVATE:{				// Private frame.
-			strncat(tCharArray, "\"PRIV\"", 6);
+			strncat(tCharArray, "\"priv\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_PLAYCOUNTER:{			// Play counter.
-			strncat(tCharArray, "\"PCNT\"", 6);
+			strncat(tCharArray, "\"pcnt\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_POPULARIMETER:{			// Popularimeter.
-			strncat(tCharArray, "\"POPM\"", 6);
+			strncat(tCharArray, "\"popm\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_POSITIONSYNC:{			// Position synchronisation frame.
-			strncat(tCharArray, "\"POSS\"", 6);
+			strncat(tCharArray, "\"poss\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_BUFFERSIZE:{			// Recommended buffer size.
-			strncat(tCharArray, "\"RBUF\"", 6);
+			strncat(tCharArray, "\"rbuf\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_VOLUMEADJ:{				// Relative volume adjustment.
-			strncat(tCharArray, "\"RVAD\"", 6);
+			strncat(tCharArray, "\"rvad\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_REVERB:{				// Reverb.
-			strncat(tCharArray, "\"RVRB\"", 6);
+			strncat(tCharArray, "\"rvrb\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_SYNCEDLYRICS:{			// Synchronized lyric/text.
-			strncat(tCharArray, "\"SYLT\"", 6);
+			strncat(tCharArray, "\"sylt\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_SYNCEDTEMPO:{			// Synchronized tempo codes.
-			strncat(tCharArray, "\"SYTC\"", 6);
+			strncat(tCharArray, "\"sytc\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_ALBUM:{					// Album/Movie/Show title.
-			strncat(tCharArray, "\"TALB\"", 6);
+			strncat(tCharArray, "\"talb\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_BPM:{					// BPM (beats per minute).
-			strncat(tCharArray, "\"TBPM\"", 6);
+			strncat(tCharArray, "\"tbpm\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_COMPOSER:{				// Composer.
-			strncat(tCharArray, "\"TCOM\"", 6);
+			strncat(tCharArray, "\"tcom\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_CONTENTTYPE:{			// Content type.
-			strncat(tCharArray, "\"TCON\"", 6);
+			strncat(tCharArray, "\"tcon\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_COPYRIGHT:{				// Copyright message.
-			strncat(tCharArray, "\"TCOP\"", 6);
+			strncat(tCharArray, "\"tcop\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_DATE:{					// Date.
-			strncat(tCharArray, "\"TDAT\"", 6);
+			strncat(tCharArray, "\"tdat\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_PLAYLISTDELAY:{			// Playlist delay.
-			strncat(tCharArray, "\"TDLY\"", 6);
+			strncat(tCharArray, "\"tdly\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_ENCODEDBY:{				// Encoded by.
-			strncat(tCharArray, "\"TENC\"", 6);
+			strncat(tCharArray, "\"tenc\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_LYRICIST:{				// Lyricist/Text writer.
-			strncat(tCharArray, "\"TEXT\"", 6);
+			strncat(tCharArray, "\"text\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_FILETYPE:{				// File type.
-			strncat(tCharArray, "\"TFLT\"", 6);
+			strncat(tCharArray, "\"tflt\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_TIME:{					// Time.
-			strncat(tCharArray, "\"TIME\"", 6);
+			strncat(tCharArray, "\"time\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_CONTENTGROUP:{			// Content group description.
-			strncat(tCharArray, "\"TIT1\"", 6);
+			strncat(tCharArray, "\"tit1\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_TITLE:{					// Title/songname/content description.
-			strncat(tCharArray, "\"TIT2\"", 6);
+			strncat(tCharArray, "\"tit2\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_SUBTITLE:{				// Subtitle/Description refinement.
-			strncat(tCharArray, "\"TIT3\"", 6);
+			strncat(tCharArray, "\"tit3\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_INITIALKEY:{			// Initial key.
-			strncat(tCharArray, "\"TKEY\"", 6);
+			strncat(tCharArray, "\"tkey\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_LANGUAGE:{				// Language(s).
-			strncat(tCharArray, "\"TLAN\"", 6);
+			strncat(tCharArray, "\"tlan\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_SONGLEN:{				// Length.
-			strncat(tCharArray, "\"TLEN\"", 6);
+			strncat(tCharArray, "\"tlen\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_MEDIATYPE:{				// Media type.
-			strncat(tCharArray, "\"TMED\"", 6);
+			strncat(tCharArray, "\"tmed\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_ORIGALBUM:{				// Original album/movie/show title.
-			strncat(tCharArray, "\"TOAL\"", 6);
+			strncat(tCharArray, "\"toal\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_ORIGFILENAME:{			// Original filename.
-			strncat(tCharArray, "\"TOFN\"", 6);
+			strncat(tCharArray, "\"tofn\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_ORIGLYRICIST:{			// Original lyricist(s)/text writer(s).
-			strncat(tCharArray, "\"TOLY\"", 6);
+			strncat(tCharArray, "\"toly\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_ORIGARTIST:{			// Original artist(s)/performer(s).
-			strncat(tCharArray, "\"TOPE\"", 6);
+			strncat(tCharArray, "\"tope\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_ORIGYEAR:{				// Original release year.
-			strncat(tCharArray, "\"TORY\"", 6);
+			strncat(tCharArray, "\"tory\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_FILEOWNER:{				// File owner/licensee.
-			strncat(tCharArray, "\"TOWN\"", 6);
+			strncat(tCharArray, "\"town\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_LEADARTIST:{			// Lead performer(s)/Soloist(s).
-			strncat(tCharArray, "\"TPE1\"", 6);
+			strncat(tCharArray, "\"tpe1\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_BAND:{					// Band/orchestra/accompaniment.
-			strncat(tCharArray, "\"TPE2\"", 6);
+			strncat(tCharArray, "\"tpe2\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_CONDUCTOR:{				// Conductor/performer refinement.
-			strncat(tCharArray, "\"TPE3\"", 6);
+			strncat(tCharArray, "\"tpe3\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_MIXARTIST:{				// Interpreted, remixed, or otherwise modified by.
-			strncat(tCharArray, "\"TPE4\"", 6);
+			strncat(tCharArray, "\"tpe4\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_PARTINSET:{				// Part of a set.
-			strncat(tCharArray, "\"TPOS\"", 6);
+			strncat(tCharArray, "\"tpos\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_PUBLISHER:{				// Publisher.
-			strncat(tCharArray, "\"TPUB\"", 6);
+			strncat(tCharArray, "\"tpub\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_TRACKNUM:{				// Track number/Position in set.
-			strncat(tCharArray, "\"TRCK\"", 6);
+			strncat(tCharArray, "\"trck\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_RECORDINGDATES:{		// Recording dates.
-			strncat(tCharArray, "\"TRDA\"", 6);
+			strncat(tCharArray, "\"trda\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_NETRADIOSTATION:{		// Internet radio station name.
-			strncat(tCharArray, "\"TRSN\"", 6);
+			strncat(tCharArray, "\"trsn\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_NETRADIOOWNER:{			// Internet radio station owner.
-			strncat(tCharArray, "\"TRSO\"", 6);
+			strncat(tCharArray, "\"trso\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_SIZE:{					// Size.
-			strncat(tCharArray, "\"TSIZ\"", 6);
+			strncat(tCharArray, "\"tsiz\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_ISRC:{					// ISRC (international standard recording code).
-			strncat(tCharArray, "\"TSRC\"", 6);
+			strncat(tCharArray, "\"tsrc\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_ENCODERSETTINGS:{		// Software/Hardware and settings used for encoding.
-			strncat(tCharArray, "\"TSSE\"", 6);
+			strncat(tCharArray, "\"tsse\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_USERTEXT:{				// User defined text information.
-			strncat(tCharArray, "\"TXXX\"", 6);
+			strncat(tCharArray, "\"txxx\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_YEAR:{					// Year.
-			strncat(tCharArray, "\"TYER\"", 6);
+			strncat(tCharArray, "\"tyer\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_UNIQUEFILEID:{			// Unique file identifier.
-			strncat(tCharArray, "\"UFID\"", 6);
+			strncat(tCharArray, "\"ufid\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_TERMSOFUSE:{			// Terms of use.
-			strncat(tCharArray, "\"USER\"", 6);
+			strncat(tCharArray, "\"user\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_UNSYNCEDLYRICS:{		// Unsynchronized lyric/text transcription.
-			strncat(tCharArray, "\"USLT\"", 6);
+			strncat(tCharArray, "\"uslt\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_WWWCOMMERCIALINFO:{		// Commercial information.
-			strncat(tCharArray, "\"WCOM\"", 6);
+			strncat(tCharArray, "\"wcom\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_WWWCOPYRIGHT:{			// Copyright/Legal infromation.
-			strncat(tCharArray, "\"WCOP\"", 6);
+			strncat(tCharArray, "\"wcop\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_WWWAUDIOFILE:{			// Official audio file webpage.
-			strncat(tCharArray, "\"WOAF\"", 6);
+			strncat(tCharArray, "\"woaf\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_WWWARTIST:{				// Official artist/performer webpage.
-			strncat(tCharArray, "\"WOAR\"", 6);
+			strncat(tCharArray, "\"woar\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_WWWAUDIOSOURCE:{		// Official audio source webpage.
-			strncat(tCharArray, "\"WOAS\"", 6);
+			strncat(tCharArray, "\"woas\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_WWWRADIOPAGE:{			// Official internet radio station homepage.
-			strncat(tCharArray, "\"WORS\"", 6);
+			strncat(tCharArray, "\"wors\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_WWWPAYMENT:{			// Payment.
-			strncat(tCharArray, "\"WPAY\"", 6);
+			strncat(tCharArray, "\"wpay\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_WWWPUBLISHER:{			// Official publisher webpage.
-			strncat(tCharArray, "\"WPUB\"", 6);
+			strncat(tCharArray, "\"wpub\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FID_WWWUSER:{				// User defined URL link.
-			strncat(tCharArray, "\"WXXX\"", 6);
+			strncat(tCharArray, "\"wxxx\"", 6);
 			*iCount += 6;
 			break;
 		}
@@ -394,133 +421,174 @@ void printFrameID(int iID, char* tCharArray, int* iCount){
 	}
 }
 
+// prints the field id according to the last part of the constant that ID3 uses but lowercase, eg ID3FN_FIELDID -> fieldid
 bool printID(int iID, char* tCharArray, int* iCount){
 	switch(iID){
 		case ID3FN_NOFIELD:{			// No field.
 			return false;
 		}
 		case ID3FN_TEXTENC:{			// Text encoding (unicode or ASCII).
-			strncat(tCharArray, "\"Text Encoding\"", 15);
+			strncat(tCharArray, "\"textenc\"", 15);
 			*iCount += 15;
 			break;
 		}
 		case ID3FN_TEXT:{				// Text field.
-			strncat(tCharArray, "\"Text Field\"", 12);
+			strncat(tCharArray, "\"text\"", 12);
 			*iCount += 12;
 			break;
 		}
 		case ID3FN_URL:{				// A URL.
-			strncat(tCharArray, "\"URL\"", 5);
+			strncat(tCharArray, "\"url\"", 5);
 			*iCount += 5;
 			break;
 		}
 		case ID3FN_DATA:{				// Data field.
-			strncat(tCharArray, "\"Data\"", 6);
+			strncat(tCharArray, "\"data\"", 6);
 			*iCount += 6;
 			break;
 		}
 		case ID3FN_DESCRIPTION:{		// Description field.
-			strncat(tCharArray, "\"Description\"", 13);
+			strncat(tCharArray, "\"description\"", 13);
 			*iCount += 13;
 			break;
 		}
 		case ID3FN_OWNER:{				// Owner field.
-			strncat(tCharArray, "\"Owner\"", 7);
+			strncat(tCharArray, "\"owner\"", 7);
 			*iCount += 7;
 			break;
 		}
 		case ID3FN_EMAIL:{				// Email field.
-			strncat(tCharArray, "\"Email\"", 7);
+			strncat(tCharArray, "\"email\"", 7);
 			*iCount += 7;
 			break;
 		}
 		case ID3FN_RATING:{				// Rating field.
-			strncat(tCharArray, "\"Rating\"", 8);
+			strncat(tCharArray, "\"rating\"", 8);
 			*iCount += 8;
 			break;
 		}
 		case ID3FN_FILENAME:{			// Filename field.
-			strncat(tCharArray, "\"File Name\"", 11);
+			strncat(tCharArray, "\"file Name\"", 11);
 			*iCount += 11;
 			break;
 		}
 		case ID3FN_LANGUAGE:{			// Language field.
-			strncat(tCharArray, "\"Language\"", 10);
+			strncat(tCharArray, "\"language\"", 10);
 			*iCount += 10;
 			break;
 		}
 		case ID3FN_PICTURETYPE:{		// Picture type field.
-			strncat(tCharArray, "\"Picture Type\"", 14);
+			strncat(tCharArray, "\"picturetype\"", 14);
 			*iCount += 14;
 			break;
 		}
 		case ID3FN_IMAGEFORMAT:{		// Image format field.
-			strncat(tCharArray, "\"Image Format\"", 14);
+			strncat(tCharArray, "\"imageformat\"", 14);
 			*iCount += 14;
 			break;
 		}
 		case ID3FN_MIMETYPE:{			// Mimetype field.
-			strncat(tCharArray, "\"Mimetype\"", 10);
+			strncat(tCharArray, "\"mimetype\"", 10);
 			*iCount += 10;
 			break;
 		}
 		case ID3FN_COUNTER:{			// Counter field.
-			strncat(tCharArray, "\"Counter\"", 9);
+			strncat(tCharArray, "\"counter\"", 9);
 			*iCount += 9;
 			break;
 		}
 		case ID3FN_ID:{					// Identifier/Symbol field.
-			strncat(tCharArray, "\"ID/Symbol\"", 11);
+			strncat(tCharArray, "\"id\"", 11);
 			*iCount += 11;
 			break;
 		}
 		case ID3FN_VOLUMEADJ:{			// Volume adjustment field.
-			strncat(tCharArray, "\"Vol-adjust\"", 12);
+			strncat(tCharArray, "\"volumeadj\"", 12);
 			*iCount += 12;
 			break;
 		}
 		case ID3FN_NUMBITS:{			// Number of bits field.
-			strncat(tCharArray, "\"Num-bits\"", 10);
+			strncat(tCharArray, "\"numbits\"", 10);
 			*iCount += 10;
 			break;
 		}
 		case ID3FN_VOLCHGRIGHT:{		// Volume chage on the right channel.
-			strncat(tCharArray, "\"vol-right\"", 11);
+			strncat(tCharArray, "\"volchgright\"", 11);
 			*iCount += 11;
 			break;
 		}
 		case ID3FN_VOLCHGLEFT:{			// Volume chage on the left channel.
-			strncat(tCharArray, "\"Vol-left\"", 10);
+			strncat(tCharArray, "\"volchgleft\"", 10);
 			*iCount += 10;
 			break;
 		}
 		case ID3FN_PEAKVOLRIGHT:{		// Peak volume on the right channel.
-			strncat(tCharArray, "\"Peak vol-right\"", 16);
+			strncat(tCharArray, "\"peakvolright\"", 16);
 			*iCount += 16;
 			break;
 		}
 		case ID3FN_PEAKVOLLEFT:{		// Peak volume on the left channel.
-			strncat(tCharArray, "\"Peak vol-left\"", 15);
+			strncat(tCharArray, "\"peakvolleft\"", 15);
 			*iCount += 15;
 			break;
 		}
 		case ID3FN_TIMESTAMPFORMAT:{	// SYLT Timestamp Format.
-			strncat(tCharArray, "\"Time Stamp\"", 12);
+			strncat(tCharArray, "\"timestampformat\"", 12);
 			*iCount += 12;
 			break;
 		}
 		case ID3FN_CONTENTTYPE:{		// SYLT content type.
-			strncat(tCharArray, "\"Content Type\"", 14);
+			strncat(tCharArray, "\"contenttype\"", 14);
 			*iCount += 14;
 			break;
 		}
 		case ID3FN_LASTFIELDID:{		// Last field placeholder.
-			strncat(tCharArray, "\"Last Field ID\"", 15);
+			strncat(tCharArray, "\"lastfieldid\"", 15);
 			*iCount += 15;
 			break;
 		}
 	}
 	return true;
+}
+
+char* getFileName(char* tFilePath, int iAddon){
+	char* tFileName = strrchr(tFilePath, '/') + sizeof(char);
+	int extLength = strlen(strstr(tFileName, "."));
+
+	int fileNameLength = strlen(tFileName);
+	int addonLength = log10(iAddon) + 1;
+
+	// the size of this array will be: length of file name + length of number addon + length of extension + terminating null
+	char* newFileName = new char[fileNameLength + addonLength + 5];
+	newFileName[0] = 0;
+
+	// copy everything but the extension
+	strncat(newFileName, tFileName, fileNameLength - extLength);
+
+	// add in the addon number
+	sprintf(newFileName, "%s%d", newFileName, iAddon);
+
+	strncat(newFileName, ".jpg", 4);
+
+	return newFileName;
+}
+
+char* getNewFilePath(char* tPath, char* fileName){
+	char* newPath = NULL;
+
+	int totalLength = strlen(tPath) + strlen(fileName);
+	if(tPath[strlen(tPath) - 1] != '/'){
+		totalLength += 1;
+
+		newPath = new char[totalLength];
+		sprintf(newPath, "%s/%s", tPath, fileName);
+	}else{
+		newPath = new char[totalLength];
+		newPath[0] = 0;
+		sprintf(newPath, "%s%s", tPath, fileName);
+	}
+
+	return newPath;
 }
 
 void printme(ID3_Field* tField, char* tCharArray, int* iCount){
@@ -539,10 +607,23 @@ void printme(ID3_Field* tField, char* tCharArray, int* iCount){
 				break;
 			}
 			case ID3FTY_BINARY:{
-				strncat(tCharArray, "\"", 1);
-				strncat(tCharArray, "Woohoo, we have stuff", 21);
-				strncat(tCharArray, "\"", 1);
-				*iCount += 21 + 2;
+				char* tNewFilePath = getNewFilePath(destPath, getFileName(filePath, iAttachmentNum));
+				iAttachmentNum++;
+				ofstream tFile(tNewFilePath);
+				if(tFile){
+					tFile.close();
+
+					tField->ToFile(tNewFilePath);
+
+					strncat(tCharArray, "\"", 1);
+					strncat(tCharArray, tNewFilePath, strlen(tNewFilePath));
+					strncat(tCharArray, "\"", 1);
+					*iCount += strlen(tNewFilePath) + 2;
+				}else{
+					strncat(tCharArray, "\"", 1);
+					strncat(tCharArray, "\"", 1);
+					*iCount += 2;
+				}
 				break;
 			}
 			case ID3FTY_TEXTSTRING:{
@@ -564,50 +645,68 @@ void printme(ID3_Field* tField, char* tCharArray, int* iCount){
 	}
 }
 
-int main()
-{
-	ID3_Tag myTag("/home/jameson/Desktop/yellow-card-believe.mp3");
-	cout << myTag.GetFileName() << endl;
-
-	cout << "Size: " << myTag.Size() << endl << endl;
-
-	char* tCharArray = new char[myTag.Size()];
-	tCharArray[0] = 0;
-	int iCount = 0;
-
+void formatJSON(ID3_Tag* myTag, char* tCharArray, int* iCount){
 	// add the initial curly brace for JSON output
 	strncat(tCharArray, "{", 1);
-	iCount += 1;
+	*iCount += 1;
 
-	ID3_Tag::Iterator *iter = myTag.CreateIterator();
+	// we'll go through each frame printing the ID and printing it's fields
+	ID3_Tag::Iterator *iter = myTag->CreateIterator();
 	ID3_Frame *myFrame = NULL;
 	while(NULL != (myFrame = iter->GetNext())){
-		printFrameID(myFrame->GetID(), tCharArray, &iCount);
+		// prints the frame id to the array that you passed in and increments iCount
+		printFrameID(myFrame->GetID(), tCharArray, iCount);
 
+		// format the fields as a JSON object
 		strncat(tCharArray, ":{", 2);
-		iCount += 2;
+		*iCount += 2;
 
+		// iterate through the fields and format the field data: fieldID:"data"
 		ID3_Frame::Iterator* fieldIter = myFrame->CreateIterator();
 		ID3_Field* tField = NULL;
 		while(NULL != (tField = fieldIter->GetNext())){
-			printme(tField, tCharArray, &iCount);
+			printme(tField, tCharArray, iCount);
 
 			strncat(tCharArray, ",", 1);
-			iCount += 1;
+			*iCount += 1;
 		}
-		tCharArray[iCount - 1] = '}'; // gets rid of the trailing comma
+
+		// add the trailing JSON curly brace and overwrite the last comma
+		tCharArray[*iCount - 1] = '}';
+
+		strncat(tCharArray, ",", 1);
+		*iCount += 1;
 	}
 
-	// add the trailing JSON curly brace
-	strncat(tCharArray, "}\n", 2);
-	iCount += 2;
+	// add the trailing JSON curly brace and overwrite the last comma
+	tCharArray[*iCount - 1] = '}';
+}
 
-	cout << "Here's the frame stuff:" << endl;
-	cout << "Count: " << iCount << endl;
-	cout << "strlen: " << strlen(tCharArray) << endl;
-	cout << "Size of array: " << myTag.Size() << endl << endl;
-	cout << tCharArray;
-	delete tCharArray;
+int main(int argc, char* argv[])
+{
+	char* tCharArray = NULL;
+	// start at one because we don't care what the program name is
+	for(int i = 1; i < argc; i++){
+		if(strncmp(argv[i], "-attachments", 11) == 0){
+			i++;
+			destPath = argv[i];
+		}else{
+			filePath = argv[i];
 
+			ID3_Tag myTag(filePath);
+
+			tCharArray = new char[myTag.Size()];
+			tCharArray[0] = 0;
+			int iCount = 0;
+
+			formatJSON(&myTag, tCharArray, &iCount);
+
+			// output to console
+			cout << tCharArray << endl;
+
+			// free our memory
+			delete[] tCharArray;
+		}
+	}
 	return 0;
 }
