@@ -8,7 +8,7 @@ id3tags
 
 Usage:
 
-    ./id3tags --file /path/to/my/.mp3
+    ./id3tags /path/to/my/.mp3
 
 Building
 ====
@@ -40,7 +40,7 @@ Ubuntu:
 OpenEmbedded:
 
     bitbake libid3
-    # should produce
+    # should produce packages in `${OE_HOME}/tmp/deploy/glibc/ipk/arm7a/` such as
     # id3lib_3.8.3-r2.6_armv7a.ipk
     # id3lib-static_3.8.3-r2.6_armv7a.ipk
     # id3lib-dev_3.8.3-r2.6_armv7a.ipk
@@ -54,9 +54,8 @@ id3lib appeared to be the only library with documentation easily googleable docu
 
 Some have said others are better. Well, tell us how to use them!
 
-  * [`taglib`](http://developer.kde.org/~wheeler/taglib/api) - Unclear on how to get all tags
-  * [`id3lib`](http://id3lib.sourceforge.net/)
+  * [`id3lib`](http://id3lib.sourceforge.net/) - has documentation
+  * [`taglib`](http://developer.kde.org/~wheeler/taglib/api) - Good documentation, but unclear on how to get all tags
+  * [`libid3`](http://freshmeat.net/projects/libid3/) - No documentation
   * [`libid3tag`](http://www.underbit.com/products/mad/) - No documentation
     * [mailing list quickstart](http://www.mars.org/pipermail/mad-dev/2002-January/000439.html)
-
-  * [`libid3`](http://freshmeat.net/projects/libid3/) - No documentation
