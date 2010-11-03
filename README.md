@@ -19,12 +19,17 @@ Building
 Dependencies
 ----
 
-  * `id3lib-3.8.3`
+The [id3lib by Dirk Mahoney](http://id3lib.sourceforge.net/) (as opposed to the others of similar name)
+
+  * `id3lib-3.8.3` - you know it's the right one because of the `3.8.3` and if the contents match
+    * /usr/lib/libid3.a
+    * /usr/lib/libid3.so
+    * /usr/include/id3/tag.h
   * `zlib`
 
 Mac OS X:
 
-    # ???
+    # ??? this doesn't seem to install anything
     sudo port install id3lib
 
 Ubuntu:
@@ -35,7 +40,11 @@ Ubuntu:
 OpenEmbedded:
 
     bitbake libid3
-    sudo opkg install id3lib-dev
+    # should produce
+    # id3lib_3.8.3-r2.6_armv7a.ipk
+    # id3lib-static_3.8.3-r2.6_armv7a.ipk
+    # id3lib-dev_3.8.3-r2.6_armv7a.ipk
+    sudo opkg install id3lib-dev id3lib id3lib-static
 
 
 Considerations
