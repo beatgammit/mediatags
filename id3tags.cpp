@@ -406,13 +406,13 @@ bool printID(int iID, char* tCharArray, int* iCount){
 			return false;
 		}
 		case ID3FN_TEXTENC:{			// Text encoding (unicode or ASCII).
-			strncat(tCharArray, "\"textenc\"", 15);
-			*iCount += 15;
+			strncat(tCharArray, "\"textenc\"", 9);
+			*iCount += 9;
 			break;
 		}
 		case ID3FN_TEXT:{				// Text field.
-			strncat(tCharArray, "\"text\"", 12);
-			*iCount += 12;
+			strncat(tCharArray, "\"text\"", 6);
+			*iCount += 6;
 			break;
 		}
 		case ID3FN_URL:{				// A URL.
@@ -446,8 +446,8 @@ bool printID(int iID, char* tCharArray, int* iCount){
 			break;
 		}
 		case ID3FN_FILENAME:{			// Filename field.
-			strncat(tCharArray, "\"file Name\"", 11);
-			*iCount += 11;
+			strncat(tCharArray, "\"filename\"", 10);
+			*iCount += 10;
 			break;
 		}
 		case ID3FN_LANGUAGE:{			// Language field.
@@ -456,13 +456,13 @@ bool printID(int iID, char* tCharArray, int* iCount){
 			break;
 		}
 		case ID3FN_PICTURETYPE:{		// Picture type field.
-			strncat(tCharArray, "\"picturetype\"", 14);
-			*iCount += 14;
+			strncat(tCharArray, "\"picturetype\"", 13);
+			*iCount += 13;
 			break;
 		}
 		case ID3FN_IMAGEFORMAT:{		// Image format field.
-			strncat(tCharArray, "\"imageformat\"", 14);
-			*iCount += 14;
+			strncat(tCharArray, "\"imageformat\"", 13);
+			*iCount += 13;
 			break;
 		}
 		case ID3FN_MIMETYPE:{			// Mimetype field.
@@ -476,53 +476,53 @@ bool printID(int iID, char* tCharArray, int* iCount){
 			break;
 		}
 		case ID3FN_ID:{					// Identifier/Symbol field.
-			strncat(tCharArray, "\"id\"", 11);
-			*iCount += 11;
+			strncat(tCharArray, "\"id\"", 4);
+			*iCount += 4;
 			break;
 		}
 		case ID3FN_VOLUMEADJ:{			// Volume adjustment field.
-			strncat(tCharArray, "\"volumeadj\"", 12);
-			*iCount += 12;
-			break;
-		}
-		case ID3FN_NUMBITS:{			// Number of bits field.
-			strncat(tCharArray, "\"numbits\"", 10);
-			*iCount += 10;
-			break;
-		}
-		case ID3FN_VOLCHGRIGHT:{		// Volume chage on the right channel.
-			strncat(tCharArray, "\"volchgright\"", 11);
+			strncat(tCharArray, "\"volumeadj\"", 11);
 			*iCount += 11;
 			break;
 		}
+		case ID3FN_NUMBITS:{			// Number of bits field.
+			strncat(tCharArray, "\"numbits\"", 9);
+			*iCount += 9;
+			break;
+		}
+		case ID3FN_VOLCHGRIGHT:{		// Volume chage on the right channel.
+			strncat(tCharArray, "\"volchgright\"", 13);
+			*iCount += 13;
+			break;
+		}
 		case ID3FN_VOLCHGLEFT:{			// Volume chage on the left channel.
-			strncat(tCharArray, "\"volchgleft\"", 10);
-			*iCount += 10;
-			break;
-		}
-		case ID3FN_PEAKVOLRIGHT:{		// Peak volume on the right channel.
-			strncat(tCharArray, "\"peakvolright\"", 16);
-			*iCount += 16;
-			break;
-		}
-		case ID3FN_PEAKVOLLEFT:{		// Peak volume on the left channel.
-			strncat(tCharArray, "\"peakvolleft\"", 15);
-			*iCount += 15;
-			break;
-		}
-		case ID3FN_TIMESTAMPFORMAT:{	// SYLT Timestamp Format.
-			strncat(tCharArray, "\"timestampformat\"", 12);
+			strncat(tCharArray, "\"volchgleft\"", 12);
 			*iCount += 12;
 			break;
 		}
-		case ID3FN_CONTENTTYPE:{		// SYLT content type.
-			strncat(tCharArray, "\"contenttype\"", 14);
+		case ID3FN_PEAKVOLRIGHT:{		// Peak volume on the right channel.
+			strncat(tCharArray, "\"peakvolright\"", 14);
 			*iCount += 14;
 			break;
 		}
+		case ID3FN_PEAKVOLLEFT:{		// Peak volume on the left channel.
+			strncat(tCharArray, "\"peakvolleft\"", 13);
+			*iCount += 13;
+			break;
+		}
+		case ID3FN_TIMESTAMPFORMAT:{	// SYLT Timestamp Format.
+			strncat(tCharArray, "\"timestampformat\"", 17);
+			*iCount += 17;
+			break;
+		}
+		case ID3FN_CONTENTTYPE:{		// SYLT content type.
+			strncat(tCharArray, "\"contenttype\"", 13);
+			*iCount += 13;
+			break;
+		}
 		case ID3FN_LASTFIELDID:{		// Last field placeholder.
-			strncat(tCharArray, "\"lastfieldid\"", 15);
-			*iCount += 15;
+			strncat(tCharArray, "\"lastfieldid\"", 13);
+			*iCount += 13;
 			break;
 		}
 	}
@@ -606,7 +606,12 @@ void printme(ID3_Field* tField, char* tCharArray, int* iCount){
 			}
 			case ID3FTY_TEXTSTRING:{
 				strncat(tCharArray, "\"", 1);
-				strncat(tCharArray, tField->GetRawText(), tField->Size());
+//				if(tField->GetRawText()){
+//					strncat(tCharArray, tField->GetRawText(), tField->Size());
+//				}else{
+//					printf(tCharArray, tField->GetRawUnicodeText(), tField->Size());
+//				}
+				//strncat(tCharArray, tField->GetRawUnicodeText(), tField->Size());
 				strncat(tCharArray, "\"", 1);
 				*iCount = strlen(tCharArray); // for some reason we keep getting weird results here
 				//*iCount += tField->Size() + 2; // size of the text plus the two quotes we put around it
