@@ -8,7 +8,8 @@ id3tags
 
 Usage:
 
-    ./id3tags /path/to/my/.mp3
+    ./id3tags /path/to/my/song.mp3
+    find /path/to/my/music/ -name *.mp3 -exec ./id3tags {} \;
 
 Building
 ====
